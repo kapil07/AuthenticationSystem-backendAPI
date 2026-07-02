@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { env } from "../../../config/env.config.js";
+import { env } from "../config/env.config.js";
+
 
 export const globalErrorHandler = (
   err: Error & {

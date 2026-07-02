@@ -3,9 +3,9 @@ import helmet from "helmet";
 import cors from "cors";
 import { env } from "./config/env.config.js";
 import cookieParser from "cookie-parser";
-import { globalErrorHandler } from "./utils/common/middlewares/error.middleware.js";
 import { Request } from "express";
 import { AppError } from "./utils/common/errors/AppError.js";
+import { globalErrorHandler } from "./middlewares/error.middleware.js";
 
 export const app = express();
 
@@ -28,6 +28,10 @@ app.get("/health-check", (_, res: Response) => {
     message: "Server is working fine!",
   });
 });
+
+import authRouter from "./modules/auth/auth.route.js"
+
+app.use("/api/v1/auth", authRouter)
 
 app.use((req: Request, _: Response, next: NextFunction) => {
   next(new AppError(`Cannot find ${req.originalUrl} on this server`, 404));
