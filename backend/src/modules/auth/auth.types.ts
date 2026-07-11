@@ -3,6 +3,11 @@ export type createUserType = {
   hashedPassword: string;
 };
 
+export type userType = {
+  userId: string
+  sessionId: string
+}
+
 export type JWTPayload = {
   sub: string;
   sessionId: string;
@@ -15,3 +20,9 @@ export type createSessionType = {
   ipAddress?: string;
   expiresAt: Date;
 };
+
+export type findUserByIdType = {
+  id: string;
+  email: string;
+  createdAt: Date
+}
