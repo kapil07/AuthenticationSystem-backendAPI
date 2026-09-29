@@ -14,6 +14,7 @@ export type JWTPayload = {
 };
 
 export type createSessionType = {
+  id: string;
   userId: string;
   refreshTokenHash: string;
   userAgent?: string;
@@ -25,4 +26,9 @@ export type findUserByIdType = {
   id: string;
   email: string;
   createdAt: Date
+}
+
+export type updateSessionType = {
+  hashedNewRefreshToken: string,
+  newRefreshTokenExpiresAt: Date
 }

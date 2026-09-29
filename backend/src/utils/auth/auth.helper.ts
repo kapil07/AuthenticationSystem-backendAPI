@@ -18,10 +18,10 @@ export const setCookie = (res: Response, refreshToken: string) => {
     throw new AppError("Invalid refresh token expiry configuration", 400);
   }
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
+    httpOnly: true, // block doucment.cookies from accessing cookie
     secure: env.NODE_ENV === "production",
     sameSite: "strict",
     maxAge: refreshTokenMaxAge,
-    path: "/api/v1/auth/refresh",
+    path: "/api/v1/auth/refreshToken",
   });
 };

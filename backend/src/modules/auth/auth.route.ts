@@ -4,6 +4,7 @@ import { loginUserSchema, registerUserSchema } from "./auth.schema.js";
 import {
     loggedInUserController,
   loginUserController,
+  refreshTokenController,
   registerUserController,
 } from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/authentication.middleware.js";
@@ -14,5 +15,6 @@ router
   .post(validate(registerUserSchema), registerUserController);
 router.route("/login").post(validate(loginUserSchema), loginUserController);
 router.route('/me').get(authMiddleware, loggedInUserController)
+router.route('/refreshToken').post(refreshTokenController)
 
 export default router;

@@ -1,6 +1,7 @@
+import { Session } from "../../../generated/prisma/index.js";
 import { prisma } from "../../lib/prisma.js";
 import { IAuthRepository } from "./auth.interface.js";
-import { createSessionType, createUserType } from "./auth.types.js";
+import { createSessionType, createUserType, updateSessionType } from "./auth.types.js";
 
 export class AuthRepository implements IAuthRepository {
   async findUserByEmail(email: string) {
@@ -28,6 +29,49 @@ export class AuthRepository implements IAuthRepository {
     return user
   }
 
+  async findSessionById(sessionId: string): Promise<Session | null> {
+    const session = await prisma.session.findUnique({
+      where: {
+        id: sessionId
+      }
+    })
+
+    return session;
+  }
+
+  async revokeUserAllSessions(userId: string): Promise<void> {
+    await prisma.session.updateMany({
+      where : {
+        userId
+      },
+      data: {
+        isRevoked: true
+      }
+    })
+  }
+  
+  async createSession(data: createSessionType) {
+    const newSession = await prisma.session.create({
+      data,
+    });
+
+    return newSession;
+  }
+
+  async updateSession(sessionId: string, data: updateSessionType): Promise<Session> {
+    const updateSession = await prisma.session.update({
+      where: {
+        id: sessionId
+      },
+      data:{
+        refreshTokenHash: data.hashedNewRefreshToken,
+        expiresAt: data.newRefreshTokenExpiresAt
+      }
+    })
+
+    return updateSession
+  }
+
   async createUser(data: createUserType) {
     const newUser = await prisma.user.create({
       data: {
@@ -39,11 +83,4 @@ export class AuthRepository implements IAuthRepository {
     return newUser;
   }
 
-  async createSession(data: createSessionType) {
-    const newSession = prisma.session.create({
-      data,
-    });
-
-    return newSession;
-  }
 }

@@ -1,9 +1,12 @@
 import { Session, User } from "../../../generated/prisma/client.js";
-import { createSessionType, createUserType, findUserByIdType } from "./auth.types.js";
+import { createSessionType, createUserType, findUserByIdType, updateSessionType } from "./auth.types.js";
 
 export interface IAuthRepository {
   findUserByEmail(email: string): Promise<User | null>;
   findUserById(userId: string): Promise<findUserByIdType | null>
-  createUser(data: createUserType): Promise<User>;
+  findSessionById(sessionId: string): Promise<Session | null>
+  revokeUserAllSessions(userId: string): Promise<void>
   createSession(data: createSessionType): Promise<Session>;
+  updateSession(sessionId: string, data: updateSessionType): Promise<Session>
+  createUser(data: createUserType): Promise<User>;
 }

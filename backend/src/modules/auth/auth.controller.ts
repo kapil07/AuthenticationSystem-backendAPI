@@ -59,7 +59,7 @@ export const loginUserController = catchAsync(
 export const loggedInUserController = catchAsync(
   async (req: Request, res: Response, _: NextFunction) => {
     const user = req?.user;
-    if(!user){
+    if (!user) {
       throw new AppError("User not found", 404)
     }
     const result = await authService.getLoggedInUser(user);
@@ -70,4 +70,22 @@ export const loggedInUserController = catchAsync(
       data: result,
     });
   },
+);
+
+export const refreshTokenController = catchAsync(
+  async (req: Request, res: Response, _: NextFunction) => {
+    const { token } = req.body;
+
+    const result = await authService.refreshSession(token);
+
+    setCookie(res, result.refreshToken);
+
+    sendResponse(res, 200, {
+      success: true,
+      message: "Refresh token rotated successfully",
+      data: {
+        accessToken: result.accessToken
+      }
+    })
+  }
 );

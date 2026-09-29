@@ -29,6 +29,7 @@ model Session {
   userId              String
   user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   refreshTokenHash    String
+  isRevoked           Boolean       @default(false)
   userAgent           String?
   ipAddress           String?
   expiresAt           DateTime
@@ -70,7 +71,7 @@ model RolePermission {
   permissionId        String
   role                Role            @relation(fields: [roleId], references: [id], onDelete: Cascade)
   permission          Permission      @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-  assignedAt          DateTime       @default(now())
+  assignedAt          DateTime        @default(now())
   
 
   @@id([roleId, permissionId])
