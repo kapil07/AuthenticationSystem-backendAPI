@@ -2,8 +2,10 @@ import express from "express";
 import { validate } from "../../middlewares/validate.middleware.js";
 import { loginUserSchema, registerUserSchema } from "./auth.schema.js";
 import {
-    loggedInUserController,
+  loggedInUserController,
   loginUserController,
+  logoutController,
+  logoutUserFromAllSessions,
   refreshTokenController,
   registerUserController,
 } from "./auth.controller.js";
@@ -16,5 +18,7 @@ router
 router.route("/login").post(validate(loginUserSchema), loginUserController);
 router.route('/me').get(authMiddleware, loggedInUserController)
 router.route('/refreshToken').post(refreshTokenController)
+router.route('/logout').post(authMiddleware, logoutController)
+router.route('/logout-all-devices').post(authMiddleware, logoutUserFromAllSessions)
 
 export default router;

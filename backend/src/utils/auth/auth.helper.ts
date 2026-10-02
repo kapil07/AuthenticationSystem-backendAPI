@@ -25,3 +25,12 @@ export const setCookie = (res: Response, refreshToken: string) => {
     path: "/api/v1/auth/refreshToken",
   });
 };
+
+export const clearCookie = (res: Response) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/api/v1/auth/refreshToken",
+  });
+}

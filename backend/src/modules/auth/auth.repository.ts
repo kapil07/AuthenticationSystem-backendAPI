@@ -14,7 +14,7 @@ export class AuthRepository implements IAuthRepository {
     return user;
   }
 
-  async findUserById(userId: string){
+  async findUserById(userId: string) {
     const user = await prisma.user.findUnique({
       where: {
         id: userId
@@ -39,9 +39,20 @@ export class AuthRepository implements IAuthRepository {
     return session;
   }
 
+  async findSessionByUserIdAndSessionId(userId: string, sessionId: string): Promise<Session | null> {
+    const session = await prisma.session.findFirst({
+      where: {
+        userId,
+        id: sessionId
+      }
+    })
+
+    return session;
+  }
+
   async revokeUserAllSessions(userId: string): Promise<void> {
     await prisma.session.updateMany({
-      where : {
+      where: {
         userId
       },
       data: {
@@ -49,7 +60,7 @@ export class AuthRepository implements IAuthRepository {
       }
     })
   }
-  
+
   async createSession(data: createSessionType) {
     const newSession = await prisma.session.create({
       data,
@@ -63,7 +74,7 @@ export class AuthRepository implements IAuthRepository {
       where: {
         id: sessionId
       },
-      data:{
+      data: {
         refreshTokenHash: data.hashedNewRefreshToken,
         expiresAt: data.newRefreshTokenExpiresAt
       }
@@ -83,4 +94,25 @@ export class AuthRepository implements IAuthRepository {
     return newUser;
   }
 
+  async deleteSession(sessionId: string): Promise<void> {
+    await prisma.session.update({
+      where: {
+        id: sessionId
+      },
+      data: {
+        isDeleted: true
+      }
+    })
+  }
+
+  async deleteUserAllSessions(userId: string): Promise<void> {
+    await prisma.session.updateMany({
+      where: {
+        userId
+      },
+      data: {
+        isDeleted: true
+      }
+    })
+  }
 }

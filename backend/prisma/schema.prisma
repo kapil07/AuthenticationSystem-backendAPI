@@ -30,6 +30,7 @@ model Session {
   user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   refreshTokenHash    String
   isRevoked           Boolean       @default(false)
+  isDeleted           Boolean       @default(false)
   userAgent           String?
   ipAddress           String?
   expiresAt           DateTime

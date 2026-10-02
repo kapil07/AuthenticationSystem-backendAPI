@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { authService } from "./auth.container.js";
 import { catchAsync } from "../../utils/common/helpers/CatchAsync.js";
 import { sendResponse } from "../../utils/common/response/AppResponse.js";
-import { setCookie } from "../../utils/auth/auth.helper.js";
+import { clearCookie, setCookie } from "../../utils/auth/auth.helper.js";
 import { AppError } from "../../utils/common/errors/AppError.js";
 
 export const registerUserController = catchAsync(
@@ -89,3 +89,29 @@ export const refreshTokenController = catchAsync(
     })
   }
 );
+
+export const logoutController = catchAsync(
+  async (req: Request, res: Response, _: NextFunction) => {
+    await authService.deleteSession(req.user?.userId as string, req.user?.sessionId as string)
+
+    clearCookie(res);
+
+    sendResponse(res, 200, {
+      success: true,
+      message: "User logout sucessfully"
+    })
+  }
+)
+
+export const logoutUserFromAllSessions = catchAsync(
+  async (req: Request, res: Response, _: NextFunction) => {
+    await authService.deleteAllUserSessions(req.user?.userId as string);
+
+    clearCookie(res);
+
+    sendResponse(res, 200, {
+      success: true,
+      message: "User logged out for all devices"
+    })
+  }
+)

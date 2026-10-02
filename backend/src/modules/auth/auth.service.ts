@@ -164,7 +164,20 @@ export class AuthService {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken
     }
+  }
 
+  async deleteSession(userId: string, sessionId: string) {
+    const session = await this.authRepo.findSessionByUserIdAndSessionId(userId, sessionId);
+
+    if(!session) {
+      throw new AppError("Session not found or you are not authorized to perform this action", 401)
+    }
+
+    await this.authRepo.deleteSession(session.id);
+  }
+
+  async deleteAllUserSessions(userId: string) {
+    await this.authRepo.deleteUserAllSessions(userId);
   }
 }
 
