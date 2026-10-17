@@ -34,8 +34,10 @@ app.get("/health-check", (_, res: Response) => {
 });
 
 import authRouter from "./modules/auth/auth.route.js";
+import adminRouter from  "./modules/admin/admin.route.js"
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/admin", adminRouter);
 
 app.use((req: Request, _: Response, next: NextFunction) => {
   next(new AppError(`Cannot find ${req.originalUrl} on this server`, 404));
