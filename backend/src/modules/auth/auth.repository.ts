@@ -1,7 +1,7 @@
 import { Session } from "../../../generated/prisma/index.js";
 import { prisma } from "../../lib/prisma.js";
 import { IAuthRepository } from "./auth.interface.js";
-import { createSessionType, createUserType, updateSessionType } from "./auth.types.js";
+import { createSessionType, createUserType, updateSessionType, UserPermissionType } from "./auth.types.js";
 
 export class AuthRepository implements IAuthRepository {
   async findUserByEmail(email: string) {
@@ -114,5 +114,39 @@ export class AuthRepository implements IAuthRepository {
         isDeleted: true
       }
     })
+  }
+
+  async getUserPermissions(userId: string): Promise<UserPermissionType | null> {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      select: {
+        id: true,
+        email: true,
+
+        userRoles: {
+          select: {
+            role: {
+              select: {
+                id: true,
+                name: true,
+                rolePermissions: {
+                  select: {
+                    permission: {
+                      select: {
+                        id: true,
+                        name: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+    return user;
   }
 }

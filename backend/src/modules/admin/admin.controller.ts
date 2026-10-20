@@ -4,13 +4,38 @@ import { adminService } from "./admin.container.js";
 import { sendResponse } from "../../utils/common/response/AppResponse.js";
 
 export const getAllUserController = catchAsync(
-    async(req: Request, res: Response, _: NextFunction) => {
+    async (req: Request, res: Response, _: NextFunction) => {
 
         const result = await adminService.getAllUsers();
 
         sendResponse(res, 200, {
             success: true,
-            message : "All users fetched successfully",
+            message: "All users fetched successfully",
+            data: result
+        })
+    }
+)
+
+export const getAllRolesController = catchAsync(
+    async (req: Request, res: Response, _: NextFunction) => {
+        const result = await adminService.getAllRoles();
+
+        sendResponse(res, 200, {
+            success: true,
+            message: "Roles fecthed succesfully",
+            data: result
+        })
+    }
+)
+
+export const getRoleByIdController = catchAsync(
+    async (req: Request, res: Response, _: NextFunction) => {
+        const roleId = req.params.roleId as string
+        const result = await adminService.getRoleById(roleId);
+
+        sendResponse(res, 200, {
+            success: true,
+            message: "Role info fetched successfully",
             data: result
         })
     }

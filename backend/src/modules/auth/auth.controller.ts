@@ -115,3 +115,15 @@ export const logoutUserFromAllSessions = catchAsync(
     })
   }
 )
+
+export const getUserPermissionController = catchAsync(
+  async (req: Request, res: Response, _: NextFunction) => {
+    const result = await authService.getUserPermissions(req.user?.userId as string)
+
+    sendResponse(res, 200, {
+      success: true,
+      message: "User permission fetched successfully",
+      data: result
+    })
+  }
+)

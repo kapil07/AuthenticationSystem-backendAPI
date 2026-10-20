@@ -10,6 +10,7 @@ import { sanitizeUserResponse } from "./auth.response.js";
 import { env } from "../../config/env.config.js";
 import ms from "ms";
 import { userType } from "./auth.types.js";
+import { toUserPermissionResponseDTO } from "./auth.dto.js";
 
 export class AuthService {
   constructor(private authRepo: IAuthRepository) { }
@@ -110,9 +111,9 @@ export class AuthService {
   }
 
   async refreshSession(refreshToken: string) {
-    console.log("refreshToken",refreshToken)
+
     const payload = verifyRefreshToken(refreshToken)
-    console.log("payload",payload)
+
     const session = await this.authRepo.findSessionById(payload.sessionId);
 
     if (!session) {
@@ -178,6 +179,20 @@ export class AuthService {
 
   async deleteAllUserSessions(userId: string) {
     await this.authRepo.deleteUserAllSessions(userId);
+  }
+
+  async getUserPermissions(userId: string) {
+    const user = await this.authRepo.getUserPermissions(userId);
+
+    if(!user) {
+      throw new AppError("User not found", 404)
+    }
+
+    // console.dir(user, {depth: null})
+    
+    const responseDTO = toUserPermissionResponseDTO(user);
+
+    return responseDTO;
   }
 }
 
