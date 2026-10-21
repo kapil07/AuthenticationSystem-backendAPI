@@ -1,6 +1,6 @@
 import { Role, User } from "../../../generated/prisma/index.js";
 import { UpdateRoleInputDTO } from "./admin.schema.js";
-import { AllRoleType, GetRoleByIdType } from "./admin.types.js";
+import { AllRoleType, GetAllUserByRoleId, GetRoleByIdType, GetUserPermissions } from "./admin.types.js";
 
 export interface IAdminRepository{
     getAllUsers(): Promise<User[] | null>
@@ -11,4 +11,7 @@ export interface IAdminRepository{
     updateRole(roleId: string, data: UpdateRoleInputDTO): Promise<Role>
     deleteRole(roleId: string): Promise<void>
     assignRoleToUser(userId: string, roleIds: string[]): Promise<void>
+    removeUserRole(userId: string, roleId: string): Promise<void>
+    getAllUserByRoleId(roleId: string): Promise<GetAllUserByRoleId>
+    getUserPermissions(userId: string): Promise<GetUserPermissions | null>
 }

@@ -72,10 +72,36 @@ export class AdminService {
 
         const immutableRoles = roles.filter((role) => IMMUTABLE_ROLES.includes(role.name as any));
 
-        if(immutableRoles.length > 0){
+        if (immutableRoles.length > 0) {
             throw new AppError("Cannot assign system roles to users", 403);
         }
 
         await this.adminRepo.assignRoleToUser(userId, data.roleIds);
+    }
+
+    async removeUserRole(userId: string, roleId: string) {
+        await this.adminRepo.removeUserRole(userId, roleId);
+    }
+
+    async getAllUsersByRoleId(roleId: string) {
+        const data = await this.adminRepo.getAllUserByRoleId(roleId);
+
+        return data;
+    }
+
+    async getUserPermissions(userId: string) {
+        const user = await this.adminRepo.getUserPermissions(userId);
+
+        if (!user) {
+            throw new AppError("User not found", 404);
+        }
+
+        const permisions = user.userRoles.flatMap((userRole) =>
+            userRole.role.rolePermissions.map((rolePermission) =>
+                rolePermission.permission.name))
+
+        const uniquePermissions = [...new Set(permisions)];
+
+        return uniquePermissions
     }
 }

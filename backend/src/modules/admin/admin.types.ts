@@ -60,3 +60,35 @@ export type GetRoleByIdType = Prisma.RoleGetPayload<{
         }
     }
 }>
+
+export type GetAllUserByRoleId = Prisma.UserRoleGetPayload<{
+    select: {
+        user: {
+            select: {
+                id: true,
+                email: true
+            },
+        },
+    },
+}>[]
+
+export type GetUserPermissions = Prisma.UserGetPayload<{
+    where: {
+        id: true,
+    },
+    include: {
+        userRoles: {
+            include: {
+                role: {
+                    include: {
+                        rolePermissions: {
+                            include: {
+                                permission: true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}>

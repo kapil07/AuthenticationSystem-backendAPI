@@ -29,6 +29,11 @@ export const assignRoleSchema = z.object({
     roleIds: z.array(z.uuid()).min(1)
 })
 
+export const removeUserRoleParamsSchema = z.object({
+    userId: z.uuid(),
+    roleId: z.uuid()
+})
+
 export type CreateRoleInputDTO = z.infer<typeof createRoleSchema>
 export type UpdateRoleInputDTO = z.infer<typeof updateRoleSchema>
 export type AssignRoleSchemaDTO = z.infer<typeof assignRoleSchema>

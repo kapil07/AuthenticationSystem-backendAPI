@@ -3,7 +3,7 @@ import { prisma } from "../../lib/prisma.js";
 import { AppError } from "../../utils/common/errors/AppError.js";
 import { IAdminRepository } from "./admin.interface.js";
 import { UpdateRoleInputDTO } from "./admin.schema.js";
-import { AllRoleType, GetRoleByIdType } from "./admin.types.js";
+import { AllRoleType, GetAllUserByRoleId, GetRoleByIdType, GetUserPermissions } from "./admin.types.js";
 
 export class AdminRepository implements IAdminRepository {
     async getAllUsers(): Promise<User[] | null> {
@@ -310,5 +310,93 @@ export class AdminRepository implements IAdminRepository {
             return true;
 
         });
-    }   
+    }
+
+    async removeUserRole(userId: string, roleId: string): Promise<void> {
+        await prisma.$transaction(async (tx) => {
+            const assignment = await tx.userRole.findUnique({
+                where: {
+                    userId_roleId: {
+                        userId,
+                        roleId
+                    },
+                },
+                include: {
+                    role: true
+                }
+            });
+
+            if (!assignment) {
+                throw new AppError("ROLE_NOT_ASSIGNED_TO_USER", 404);
+            }
+
+            if (assignment.role.name === "ADMIN") {
+                const adminCount = await tx.userRole.count({
+                    where: {
+                        role: {
+                            name: "ADMIN"
+                        },
+                    },
+                });
+
+                if (adminCount <= 1) {
+                    throw new AppError("LAST_ADMIN_ROLE", 403);
+                }
+            };
+
+            await tx.userRole.delete({
+                where: {
+                    userId_roleId: {
+                        userId,
+                        roleId
+                    },
+                },
+            });
+
+            return true;
+        });
+    }
+
+    async getAllUserByRoleId(roleId: string): Promise<GetAllUserByRoleId> {
+        const users = await prisma.userRole.findMany({
+            where: {
+                roleId,
+            },
+            select: {
+                user: {
+                    select: {
+                        id: true,
+                        email: true
+                    },
+                },
+            },
+        });
+
+        return users
+    }
+
+    async getUserPermissions(userId: string): Promise<GetUserPermissions | null> {
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId,
+            },
+            include: {
+                userRoles: {
+                    include: {
+                        role: {
+                            include: {
+                                rolePermissions: {
+                                    include: {
+                                        permission: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        return user
+    }
 }

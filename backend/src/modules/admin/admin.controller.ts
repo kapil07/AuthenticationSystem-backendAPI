@@ -91,3 +91,41 @@ export const assignRoleToUserController = catchAsync(
     }
 )
 
+export const removeRoleFromUserController = catchAsync(
+    async (req: Request, res: Response, _: NextFunction) => {
+
+        await adminService.removeUserRole(req.params.userId as string, req.params.roleId as string);
+
+        sendResponse(res, 200, {
+            success: true,
+            message: "Role removed successfully"
+        })
+    }
+)
+
+export const getAllUserOfRoleController = catchAsync(
+    async (req: Request, res: Response, _: NextFunction) => {
+
+        const result = await adminService.getAllUsersByRoleId(req.params.roleId as string);
+
+        sendResponse(res, 200, {
+            success: true,
+            message: "Users fetched successfully",
+            data: result
+        })
+    }
+)
+
+export const getUserPermissionsController = catchAsync(
+    async (req: Request, res: Response, _: NextFunction) => {
+
+        const result = await adminService.getUserPermissions(req.params.userId as string);
+
+        sendResponse(res, 200, {
+            success: true,
+            message: "User Permissions fetched successfully",
+            data: result
+        })
+    }
+)
+
