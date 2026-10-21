@@ -40,3 +40,54 @@ export const getRoleByIdController = catchAsync(
         })
     }
 )
+
+export const createRoleController = catchAsync(
+    async (req: Request, res: Response, _: NextFunction) => {
+
+        const result = await adminService.createRole(req.body)
+
+        sendResponse(res, 201, {
+            success: true,
+            message: "Role created successfully",
+            data: result
+        })
+    }
+)
+
+export const updateRoleController = catchAsync(
+    async (req: Request, res: Response, _: NextFunction) => {
+
+        const result = await adminService.updateRole(req.params.roleId as string, req.body)
+
+        sendResponse(res, 200, {
+            success: true,
+            message: "Role updated successfully",
+            data: result
+        })
+    }
+)
+
+export const deleteRoleController = catchAsync(
+    async (req: Request, res: Response, _: NextFunction) => {
+
+        await adminService.deleteRole(req.params.roleId as string)
+
+        sendResponse(res, 200, {
+            success: true,
+            message: "Role deleted successfully"
+        })
+    }
+)
+
+export const assignRoleToUserController = catchAsync(
+    async (req: Request, res: Response, _: NextFunction) => {
+
+        await adminService.assignRoleToUser(req.params.userId as string, req.body);
+
+        sendResponse(res, 200, {
+            success: true,
+            message: "Role assigned to user successfully"
+        })
+    }
+)
+
